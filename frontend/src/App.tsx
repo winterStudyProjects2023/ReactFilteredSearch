@@ -1,12 +1,17 @@
-import React, { ReactComponentElement } from 'react';
+import React, { ReactNode } from 'react';
 import './App.css'; 
 
-type Vehicles= {
+interface Vehicles {
   category: string,
   price: string,
   stocked: boolean,
   model: string,
 }
+
+// interface VehiclesProps {
+//   vehicle: Vehicles,
+//   key: string
+// }
 
 const vehicles: Vehicles[] = [
   {category: "Cars", price: "$40000", stocked: true, model: "Audi"},
@@ -18,7 +23,8 @@ const vehicles: Vehicles[] = [
 ];
 
 function App() {
-  function VehicleCategoryRow({ category }:string) {
+  
+  function VehicleCategoryRow ({ category }:{ category: string }) {
     return (
       <tr>
         <th colSpan={2}>
@@ -28,22 +34,21 @@ function App() {
     );
   }
   
-  function VehicletRow({ vehicles }:Vehicles[]) {
+  function VehicletRow ({ vehicle }: {vehicle:Vehicles}) {
        
-  
     return (
       <tr>
-        <td>{vehicles.model}</td>
-        <td>{vehicles.price}</td>
+        <td>{vehicle.model}</td>
+        <td>{vehicle.price}</td>
       </tr>
     );
   }
   
-  function VehicleTable({ vehicles }:Vehicles[]) {
-    const rows: React.FC[] | string = [];
+  function VehicleTable({ vehicles }:{vehicles:Vehicles[]}) {
+    const rows: ReactNode[] = [];
     let currentCategory: string |null = null;
   
-    vehicles.forEach((vehicle) => {
+    vehicles.forEach((vehicle:Vehicles) => {
       if (vehicle.category !== currentCategory) {
         rows.push(
           <VehicleCategoryRow
@@ -52,9 +57,9 @@ function App() {
         );
       }
       rows.push(
-        <VehicleRow
+        <VehicletRow
           vehicle={vehicle}
-          key={vehicle.name} />
+          key={vehicle.model} />
       );
       currentCategory = vehicle.category;
     });
@@ -85,27 +90,19 @@ function App() {
     );
   }
   
-  function FilterableProductTable({ products }) {
+  function FilterableVehicleTable({ vehicles }:{vehicles:Vehicles[]}) {
     return (
       <div>
         <SearchBar />
-        <ProductTable products={products} />
+        <VehicleTable vehicles = { vehicles } />
       </div>
     );
   }
   
-  const PRODUCTS = [
-    {category: "Fruits", price: "$1", stocked: true, name: "Apple"},
-    {category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit"},
-    {category: "Fruits", price: "$2", stocked: false, name: "Passionfruit"},
-    {category: "Vegetables", price: "$2", stocked: true, name: "Spinach"},
-    {category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin"},
-    {category: "Vegetables", price: "$1", stocked: true, name: "Peas"}
-  ];
-  
+
   return (
     <div className="App">
-      return <FilterableProductTable products={PRODUCTS} />;
+      return <FilterableVehicleTable vehicles = {vehicles} />;
     </div>
   );
 }
