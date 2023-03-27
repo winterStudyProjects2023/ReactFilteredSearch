@@ -75,6 +75,19 @@ function App() {
     let currentCategory: string | null = null;
 
     vehicles.forEach((vehicle) => {
+
+      if (
+        vehicle.model.toLowerCase().indexOf(
+          filterText!.toLowerCase()
+        ) === -1
+      ) {
+        return;
+      }
+      
+      if (inStockOnly && !vehicle.stocked) {
+        return;
+      }
+
       if (vehicle.category !== currentCategory) {
         rows.push(
           <VehicleCategoryRow
@@ -82,9 +95,7 @@ function App() {
             key={vehicle.category} />
         );
       }
-      if (inStockOnly && !vehicle.stocked) {
-        return;
-      }
+    
       rows.push(
         <VehicleRow
           vehicle={vehicle}
