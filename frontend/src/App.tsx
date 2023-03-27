@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { useState, ReactNode } from 'react';
 import './App.css'; 
 
 interface Vehicles {
@@ -8,10 +8,10 @@ interface Vehicles {
   model: string,
 }
 
-// interface VehiclesProps {
-//   vehicle: Vehicles,
-//   key: string
-// }
+interface StateProps {
+  filterText: string,
+  isInStock: boolean
+}
 
 const vehicles: Vehicles[] = [
   {category: "Cars", price: "$40000", stocked: true, model: "Audi"},
@@ -44,7 +44,10 @@ function App() {
     );
   }
   
-  function VehicleTable({ vehicles }:{vehicles:Vehicles[]}) {
+  function VehicleTable({ vehicles,
+     filterText,
+     inStockOnly
+    }) {
     const rows: ReactNode[] = [];
     let currentCategory: string |null = null;
   
@@ -55,6 +58,9 @@ function App() {
             category={vehicle.category}
             key={vehicle.category} />
         );
+      }
+      if (inStockOnly && !vehicle.stocked) {
+        return;
       }
       rows.push(
         <VehicletRow
@@ -68,7 +74,7 @@ function App() {
       <table>
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Vehicle</th>
             <th>Price</th>
           </tr>
         </thead>
@@ -77,32 +83,54 @@ function App() {
     );
   }
   
-  function SearchBar() {
+  function SearchBar({
+    filterText,
+    inStockOnly,
+    onFilterTextChange,
+    onInStockOnlyChange
+  }) {
     return (
       <form>
-        <input type="text" placeholder="Search..." />
+        <input type="text"
+         value={filterText} 
+         placeholder="Search..."
+         onChange={(e) => onFilterTextChange(e.target.value)} />
         <label>
-          <input type="checkbox" />
+          <input type="checkbox"
+           checked={inStockOnly} 
+           onChange={(e) => onInStockOnlyChange(e.target.checked)} />
           {' '}
-          Only show products in stock
+          Show only vehicles in stock
         </label>
       </form>
     );
   }
   
   function FilterableVehicleTable({ vehicles }:{vehicles:Vehicles[]}) {
+    const [filterText, setFilterText] = useState('');
+    const [inStockOnly, setInStockOnly] = useState(false);
+
+
+
     return (
       <div>
-        <SearchBar />
-        <VehicleTable vehicles = { vehicles } />
+        <SearchBar
+         filterText={filterText} 
+         inStockOnly={inStockOnly} 
+         onFilterTextChange={setFilterText} 
+         onInStockOnlyChange={setInStockOnly}
+         />
+        <VehicleTable 
+          vehicles={vehicles} 
+          filterText={filterText}
+          inStockOnly={inStockOnly} />
       </div>
     );
   }
   
-
   return (
     <div className="App">
-      return <FilterableVehicleTable vehicles = {vehicles} />;
+       <FilterableVehicleTable vehicles = {vehicles} />;
     </div>
   );
 }
