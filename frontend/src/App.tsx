@@ -90,6 +90,8 @@ function App() {
     );
   }
   
+
+
   function FilterableVehicleTable({ vehicles }:{vehicles:Vehicles[]}) {
     return (
       <div>
